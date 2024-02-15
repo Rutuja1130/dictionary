@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dictionary Web App</title>
+    <style>
+        body {
+            background-image: url("https://thumbs.dreamstime.com/z/abc-alphabet-background-colorful-white-64449354.jpg");
+        }
+        .container {
+            font-family: arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Center vertically */
+            height: 100vh; /* Full viewport height */
+            flex-direction: column; /* Align items in a column */
+        }
+        input[type="text"] {
+            width: 300px; /* Adjust width as needed */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="dictionaryForm">
+            <h1>Dictionary</h1>
+            <input type="text" id="wordInput" placeholder="Enter a word">
+            <button type="submit">Search</button>
+        </form>
+        <div id="resultContainer"></div>
+    </div>
+
+    <script>
+        document.getElementById("dictionaryForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent form submission
+            
+            var word = document.getElementById("wordInput").value;
+            var apiUrl = "https://api.dictionaryapi.dev/api/v2/entries/en/" + word;
+
+            fetch(apiUrl)
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw Error("Word not found");
+                    }
+                    return response.json();
+                })
+                .then(function(data) {
+                    var meanings = data[0].meanings.map(meaning => "<li>" + meaning.definitions[0].definition + "</li>").join("");
+                    document.getElementById("resultContainer").innerHTML = "<h2>Meaning(s):</h2><ul>" + meanings + "</ul>";
+                })
+                .catch(function(error) {
+                    document.getElementById("resultContainer").innerHTML = "<p>Word not found!</p>";
+                });
+        });
+    </script>
+</body>
+</html>
